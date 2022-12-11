@@ -21,7 +21,6 @@ if __name__ == "__main__":
     data.train_mask = data.val_mask = data.test_mask = data.y = None
     data = train_test_split_edges(data)
 
-
     # Build iVGAE Model
     encoder = iVGAE_Encoder(data.x.shape[1], hidden_channels, out_channels)
     decoder = iVGAE_Decoder(out_channels, hidden_channels, data.x.shape[1])
@@ -36,7 +35,6 @@ if __name__ == "__main__":
         model.train()
         x_gen, z = model(data.x, data.train_pos_edge_index)
         loss = loss_fn(data.x, x_gen)
-        loss = model.recon_loss(z, data.train_pos_edge_index)
         loss = loss + (1 / data.num_nodes) * model.kl_loss()
 
         optimizer.zero_grad()
