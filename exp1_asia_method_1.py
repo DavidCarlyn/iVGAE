@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     # Create Dataset
     set_seed(2022)
-    train_dset = ASIA(num_samples=50, transform=T.NormalizeFeatures())
+    train_dset = ASIA(num_samples=8000, transform=T.NormalizeFeatures())
     test_dset = ASIA(num_samples=1000, transform=T.NormalizeFeatures())
     in_channels = train_dset.data_list[0].x.shape[1]
 
