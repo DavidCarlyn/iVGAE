@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     # Create Dataset
     set_seed(2022)
-    train_dset = ASIA(num_samples=8000, transform=T.NormalizeFeatures())
+    train_dset = ASIA(num_samples=50, transform=T.NormalizeFeatures())
     test_dset = ASIA(num_samples=1000, transform=T.NormalizeFeatures())
     in_channels = train_dset.data_list[0].x.shape[1]
 
@@ -36,6 +36,7 @@ if __name__ == "__main__":
     all_losses = []
     all_train_acc = []
     all_test_acc = []
+    best_val_acc = 0
     for epoch in range(epochs):
         model.train()
         total_loss = 0
@@ -79,6 +80,8 @@ if __name__ == "__main__":
         total_acc /= len(test_dset.data_list)
         print(f"Epoch: {epoch + 1} - Test Acc: {total_acc}")
         all_test_acc.append(total_acc)
+        if total_acc >= best_val_acc:
+            torch.save(model.state_dict(), "exp1_model.pt")
 
         if (epoch+1) % 1 == 0:
             plt.figure(figsize=(16, 9))
