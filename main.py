@@ -17,7 +17,8 @@ if __name__ == "__main__":
     # Create Dataset
     dataset = Planetoid("data/citeseer", "CiteSeer", transform=T.NormalizeFeatures())
     data = dataset[0]
-    print(data.x[0][-1])
+    print(data.x[0])
+    print(len(dataset))
     data.train_mask = data.val_mask = data.test_mask = data.y = None
     data = train_test_split_edges(data)
 
