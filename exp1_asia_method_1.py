@@ -57,7 +57,7 @@ if __name__ == "__main__":
             preds[x_gen >= 0.5] = 1
 
             acc = (x == preds.cuda()).sum() / x.shape[0]
-            total_acc += acc
+            total_acc += acc.item()
 
         total_loss /= len(train_dset.data_list)
         total_acc /= len(train_dset.data_list)
