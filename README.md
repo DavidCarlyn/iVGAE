@@ -1,5 +1,5 @@
 # Origin
-This repository was created as a result of a class project in CSE 6521 instructed by Dr. Yu Su at Ohio State University. Ronald Davies and myself (David Carlyn) are the authors of this code and report given. See the section below for the original work and authors () that this code is based on.
+This repository was created as a result of a class project in CSE 6521 instructed by Dr. Yu Su at Ohio State University. Ronald Davies and myself (David Carlyn) are the authors of this code and report given. See the section below for the original work and authors that this code is based on.
 
 # Attempted Reimplementation of the iVGAE model:
 Based on the interventional variational graph autoencoder from the paper [Relating Graph Neural Networks to Structural Causal Models](https://arxiv.org/abs/2109.04173)
