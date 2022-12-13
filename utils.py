@@ -24,3 +24,18 @@ def get_args():
     parser.add_argument("--i_probs", type=float, nargs="+", default=[])
 
     return parser.parse_args()
+
+def get_test_args():
+    parser = ArgumentParser()
+    parser.add_argument("--seed", type=int, default=2022)
+    parser.add_argument("--hidden_channels", type=int, default=10)
+    parser.add_argument("--out_channels", type=int, default=10)
+    parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--test_samples", type=int, default=1000)
+    parser.add_argument("--num_of_runs", type=int, default=50)
+    parser.add_argument("--dset", type=str, choices=["asia", "earthquake"], default="asia")
+    parser.add_argument("--model", type=str, default=None)
+    parser.add_argument("--i_vars", type=str, nargs="+", default=[])
+    parser.add_argument("--i_probs", type=float, nargs="+", default=[])
+
+    return parser.parse_args()
