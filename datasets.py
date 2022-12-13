@@ -142,12 +142,88 @@ class ASIA:
         self.data_list = [process(Data(x=x.unsqueeze(1), edge_index=self.edge_index)) for x in self.nodes_features]
 
 
-"""
-See book:
-Title: Bayesian artificial intelligence
-Authors: Korb K, Nicholson A
-Year: 2010
-"""
-class EarthQuake:
-    def __init__(self, num_samples=10000, interventions={}):
+class Earthquake:
+    """
+    See book:
+    Title: Bayesian artificial intelligence
+    Authors: Korb K, Nicholson A
+    Year: 2010
+
+    B -> A, E -> A, A -> J, A -> M
+
+    p(B) = 0.001            p(A | B, E) = 0.95
+                            p(A | B, ~E) = 0.94
+    p(E) = 0.002            p(A | ~B, E) = 0.29
+                            p(A | ~B, ~E) = 0.001
+
+    p(J | A) = 0.90         p(M | A) = 0.07
+    p(J | ~A) = 0.05        p(M | ~A) = 0.01
+    
+    """
+    def __init__(self, num_samples=10000, interventions={}, transform=None):
         super().__init__()
+        self.nodes = ['B', 'E', 'A', 'J', 'M']
+        self.edges = [
+            ['B', 'A'],
+            ['E', 'A'],
+            ['A', 'J'],
+            ['A', 'M']
+        ]
+        self.edge_index = create_adjacency_matrix(self.nodes, self.edges, interventions)
+        self.graphs = []
+
+        # Burglary occurs
+        if 'B' in interventions.keys():
+            B = run_probabilities(num_samples, interventions['B'])
+        else:
+            B = run_probabilities(num_samples, 0.001)
+        
+        # Earthquake occurs
+        if 'E' in interventions.keys():
+            E = run_probabilities(num_samples, interventions['E'])
+        else:
+            E = run_probabilities(num_samples, 0.002)
+        
+        # Alarm sounds
+        if 'A' in interventions.keys():
+            A = run_probabilities(num_samples, interventions['A'])
+        else:
+            B_mask = B == 1
+            E_mask = E == 1
+            A = np.zeros(num_samples)
+            mask = B_mask & E_mask
+            A[mask] = run_probabilities(mask.sum(), 0.95)
+            mask = B_mask & ~E_mask
+            A[mask] = run_probabilities(mask.sum(), 0.94)
+            mask = ~B_mask & E_mask
+            A[mask] = run_probabilities(mask.sum(), 0.29)
+            mask = ~B_mask & ~E_mask
+            A[mask] = run_probabilities(mask.sum(), 0.001)
+
+        # John calls
+        if 'J' in interventions.keys():
+            J = run_probabilities(num_samples, interventions['J'])
+        else:
+            A_mask = A == 1
+            J = np.zeros(num_samples)
+            J[A_mask] = run_probabilities(A_mask.sum(), 0.90)
+            J[~A_mask] = run_probabilities((~A_mask).sum(), 0.05)
+        
+        # Mary calls
+        if 'M' in interventions.keys():
+            M = run_probabilities(num_samples, interventions['M'])
+        else:
+            A_mask = A == 1
+            M = np.zeros(num_samples)
+            M[A_mask] = run_probabilities(A_mask.sum(), 0.70)
+            M[~A_mask] = run_probabilities((~A_mask).sum(), 0.01)
+        
+        # ['B', 'E', 'A', 'J', 'M']
+        self.nodes_features = torch.tensor(np.stack((B, E, A, J, M)).T, dtype=torch.float)
+        self.edge_index = torch.tensor(self.edge_index, dtype=torch.long)
+        def process(data):
+            if transform is not None:
+                return transform(data)
+            return data
+
+        self.data_list = [process(Data(x=x.unsqueeze(1), edge_index=self.edge_index)) for x in self.nodes_features]

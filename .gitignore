@@ -1,5 +1,11 @@
 __pycache__
 
 data
+results
+tmp
+
 *.png
+*.txt
+*.pt
+*.log
 *.txt
